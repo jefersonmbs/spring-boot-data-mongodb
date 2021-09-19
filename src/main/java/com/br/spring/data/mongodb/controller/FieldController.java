@@ -1,9 +1,10 @@
-package com.bezkoder.spring.data.mongodb.controller;
+package com.br.spring.data.mongodb.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.br.spring.data.mongodb.model.FieldTeste;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,40 +19,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bezkoder.spring.data.mongodb.model.Tutorial;
-import com.bezkoder.spring.data.mongodb.repository.TutorialRepository;
+import com.br.spring.data.mongodb.repository.FieldRepository;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
-public class TutorialController {
+public class FieldController {
 
   @Autowired
-  TutorialRepository tutorialRepository;
+  FieldRepository fieldRepository;
 
-  @GetMapping("/tutorials")
-  public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false) String title) {
+  @GetMapping("/fields")
+  public ResponseEntity<List<FieldTeste>> getAllfields(@RequestParam(required = false) String title) {
     try {
-      List<Tutorial> tutorials = new ArrayList<Tutorial>();
+      List<FieldTeste> fields = new ArrayList<FieldTeste>();
 
       if (title == null)
-        tutorialRepository.findAll().forEach(tutorials::add);
+        fieldRepository.findAll().forEach(fields::add);
       else
-        tutorialRepository.findByTitleContaining(title).forEach(tutorials::add);
+        fieldRepository.findByTitleContaining(title).forEach(fields::add);
 
-      if (tutorials.isEmpty()) {
+      if (fields.isEmpty()) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
       }
 
-      return new ResponseEntity<>(tutorials, HttpStatus.OK);
+      return new ResponseEntity<>(fields, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @GetMapping("/tutorials/{id}")
-  public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") String id) {
-    Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+  @GetMapping("/fields/{id}")
+  public ResponseEntity<FieldTeste> getTutorialById(@PathVariable("id") String id) {
+    Optional<FieldTeste> tutorialData = fieldRepository.findById(id);
 
     if (tutorialData.isPresent()) {
       return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
@@ -60,60 +60,60 @@ public class TutorialController {
     }
   }
 
-  @PostMapping("/tutorials")
-  public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
+  @PostMapping("/fields")
+  public ResponseEntity<FieldTeste> createTutorial(@RequestBody FieldTeste tutorial) {
     try {
-      Tutorial _tutorial = tutorialRepository.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
+      FieldTeste _tutorial = fieldRepository.save(new FieldTeste(tutorial.getTitle(), tutorial.getDescription(), false));
       return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @PutMapping("/tutorials/{id}")
-  public ResponseEntity<Tutorial> updateTutorial(@PathVariable("id") String id, @RequestBody Tutorial tutorial) {
-    Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+  @PutMapping("/fields/{id}")
+  public ResponseEntity<FieldTeste> updateTutorial(@PathVariable("id") String id, @RequestBody FieldTeste tutorial) {
+    Optional<FieldTeste> tutorialData = fieldRepository.findById(id);
 
     if (tutorialData.isPresent()) {
-      Tutorial _tutorial = tutorialData.get();
+      FieldTeste _tutorial = tutorialData.get();
       _tutorial.setTitle(tutorial.getTitle());
       _tutorial.setDescription(tutorial.getDescription());
       _tutorial.setPublished(tutorial.isPublished());
-      return new ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+      return new ResponseEntity<>(fieldRepository.save(_tutorial), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
   }
 
-  @DeleteMapping("/tutorials/{id}")
+  @DeleteMapping("/fields/{id}")
   public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") String id) {
     try {
-      tutorialRepository.deleteById(id);
+      fieldRepository.deleteById(id);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @DeleteMapping("/tutorials")
-  public ResponseEntity<HttpStatus> deleteAllTutorials() {
+  @DeleteMapping("/fields")
+  public ResponseEntity<HttpStatus> deleteAllfields() {
     try {
-      tutorialRepository.deleteAll();
+      fieldRepository.deleteAll();
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @GetMapping("/tutorials/published")
-  public ResponseEntity<List<Tutorial>> findByPublished() {
+  @GetMapping("/fields/published")
+  public ResponseEntity<List<FieldTeste>> findByPublished() {
     try {
-      List<Tutorial> tutorials = tutorialRepository.findByPublished(true);
+      List<FieldTeste> fields = fieldRepository.findByPublished(true);
 
-      if (tutorials.isEmpty()) {
+      if (fields.isEmpty()) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
       }
-      return new ResponseEntity<>(tutorials, HttpStatus.OK);
+      return new ResponseEntity<>(fields, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
